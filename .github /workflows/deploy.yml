@@ -33,7 +33,7 @@ jobs:
 
             cd ${{ secrets.DEPLOY_PATH }} || mkdir -p ${{ secrets.DEPLOY_PATH }}
 
-            git pull origin main || git clone https://github.com/shafayeatt1995/am_backend ${{ secrets.DEPLOY_PATH }}
+            git pull origin main || git clone https://github.com/shafayeatt1995/plexus_backend ${{ secrets.DEPLOY_PATH }}
 
             cd ${{ secrets.DEPLOY_PATH }}
 
@@ -47,8 +47,6 @@ jobs:
             GOOGLE_CLIENT_ID=${{ secrets.GOOGLE_CLIENT_ID }}
             GOOGLE_SECRET=${{ secrets.GOOGLE_SECRET }}
             SOCIAL_LOGIN_PASS=${{ secrets.SOCIAL_LOGIN_PASS }}
-            UPLOADTHING_SECRET=${{ secrets.UPLOADTHING_SECRET }}
-            UPLOADTHING_APP_ID=${{ secrets.UPLOADTHING_APP_ID }}
             STRIPE_SECRET_KEY=${{ secrets.STRIPE_SECRET_KEY }}
             STRIPE_PUBLISHER_KEY=${{ secrets.STRIPE_PUBLISHER_KEY }}
             EOF
