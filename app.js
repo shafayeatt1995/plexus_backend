@@ -36,10 +36,7 @@ app.use((req, res, next) => {
   console.log(`${req.method}=>${req.url}`);
   next();
 });
-app.get("/", (req, res) => {
-  res.json({ message: "Hello world" });
-});
-
+app.get("/", (req, res) => res.json({ message: "Hello world" }));
 app.use("/", require("./routes"));
 
 app.listen(port, "0.0.0.0", () => {
