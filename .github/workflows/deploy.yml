@@ -53,7 +53,7 @@ jobs:
 
             yarn install --frozen-lockfile
 
-            pm2 describe backend_8000 &>/dev/null && pm2 restart backend_8000 || pm2 start yarn --name backend_8000 -- start
+            pm2 describe backend_8001 &>/dev/null && pm2 restart backend_8001 || pm2 start yarn --name backend_8001 -- start
             pm2 save
             sudo nginx -t
             sudo systemctl reload nginx

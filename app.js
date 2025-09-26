@@ -5,7 +5,7 @@ const session = require("express-session");
 const cors = require("cors");
 const cookieParser = require("cookie-parser");
 const MongoStore = require("connect-mongo");
-const port = parseInt(process.env.PORT || "8000", 10);
+const port = parseInt(process.env.PORT || "8001", 10);
 require("./config/mongo");
 
 app.use(
