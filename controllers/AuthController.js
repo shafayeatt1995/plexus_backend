@@ -1,17 +1,26 @@
 const jwt = require("jsonwebtoken");
 const { User } = require("../models");
-const { randomKey, message } = require("../utils");
+const { randomKey, message, objectID } = require("../utils");
 
 const controller = {
   async login(req, res) {
     try {
-      const { _id, name, email, power, avatar, type } = req.user;
+      const {
+        _id,
+        name,
+        email,
+        power,
+        avatar,
+        type,
+        token: userToken,
+      } = req.user;
       const payload = {
         _id,
         name,
         email,
         avatar,
         type,
+        token: userToken,
       };
 
       if (power === 420 && type === "admin") {
@@ -53,10 +62,10 @@ const controller = {
       const { token: oldToken } = req.body;
       const validateToken = jwt.verify(oldToken, process.env.AUTH_SECRET);
       if (!validateToken) throw new Error(`token isn't valid`);
-      const user = await User.findOne({ _id: validateToken._id }).select(
-        "+power"
-      );
-      const { _id, name, email, power, avatar, type } = user;
+      const user = await User.findOne({
+        _id: objectID(validateToken._id),
+      }).select("+power");
+      const { _id, name, email, power, avatar, type, token: userToken } = user;
 
       const payload = {
         _id,
@@ -64,6 +73,7 @@ const controller = {
         email,
         avatar,
         type,
+        token: userToken,
       };
 
       if (power === 420 && type === "admin") {

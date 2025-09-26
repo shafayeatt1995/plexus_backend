@@ -29,6 +29,8 @@ app.use(
   })
 );
 
+app.use("/webhook", require("./webhook"));
+
 app.use(express.json());
 app.use((req, res, next) => {
   console.log(`${req.method}=>${req.url}`);
