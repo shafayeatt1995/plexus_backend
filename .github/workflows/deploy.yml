@@ -50,6 +50,7 @@ jobs:
             STRIPE_SECRET_KEY=${{ secrets.STRIPE_SECRET_KEY }}
             STRIPE_PUBLISHER_KEY=${{ secrets.STRIPE_PUBLISHER_KEY }}
             STRIPE_WEBHOOK_SECRET=${{ secrets.STRIPE_WEBHOOK_SECRET }}
+            OPENAI_API_KEY=${{ secrets.OPENAI_API_KEY }}
             EOF
 
             yarn install --frozen-lockfile

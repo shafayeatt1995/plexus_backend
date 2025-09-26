@@ -14,11 +14,7 @@ function socketServer(app) {
   global.io = io;
 
   io.on("connection", (socket) => {
-    console.log("✅ connected:", socket.id);
     socket.join("global-room");
-    socket.on("disconnect", () => {
-      console.log("❌ disconnected:", socket.id);
-    });
   });
 
   return server;

@@ -1,14 +1,17 @@
 const { Summary } = require("../models");
 const { paginate, hasOne } = require("../utils");
+const { summarizeText } = require("../utils/ai");
 
 const controller = {
   async summary(req, res) {
     try {
       const { text, socketID } = req.body;
+      const output = await summarizeText(text);
+
       const item = await Summary.create({
         userID: req.user._id,
         input: text,
-        output: text,
+        output,
       });
       if (item) {
         const [summary] = await Summary.aggregate([
@@ -16,8 +19,7 @@ const controller = {
           { $limit: 1 },
           ...hasOne("userID", "users", "user", ["name", "avatar"]),
         ]);
-        // global.io.to("global-room").except(socketID).emit("summary", summary);
-        global.io.to("global-room").emit("summary", summary);
+        global.io.to("global-room").except(socketID).emit("summary", summary);
       }
 
       return res.json({ item });
