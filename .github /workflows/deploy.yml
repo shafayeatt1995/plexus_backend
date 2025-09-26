@@ -1,0 +1,61 @@
+name: Deploy Backend to New VPS
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: 22
+
+      - name: Install dependencies
+        run: yarn install
+
+      - name: Deploy to VPS
+        uses: appleboy/ssh-action@v0.1.7
+        with:
+          host: ${{ secrets.DEPLOY_HOST }}
+          username: ${{ secrets.DEPLOY_USER }}
+          key: ${{ secrets.DEPLOY_KEY }}
+          script: |
+            export NVM_DIR="$HOME/.nvm"
+            [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"
+
+            cd ${{ secrets.DEPLOY_PATH }} || mkdir -p ${{ secrets.DEPLOY_PATH }}
+
+            git pull origin main || git clone https://github.com/shafayeatt1995/am_backend ${{ secrets.DEPLOY_PATH }}
+
+            cd ${{ secrets.DEPLOY_PATH }}
+
+
+            cat > .env <<EOF
+            BASE_URL=${{ secrets.BASE_URL }}
+            API_URL=${{ secrets.API_URL }}
+            SESSION_SECRET=${{ secrets.SESSION_SECRET }}
+            AUTH_SECRET=${{ secrets.AUTH_SECRET }}
+            MONGO_URL=${{ secrets.MONGO_URL }}
+            GOOGLE_CLIENT_ID=${{ secrets.GOOGLE_CLIENT_ID }}
+            GOOGLE_SECRET=${{ secrets.GOOGLE_SECRET }}
+            SOCIAL_LOGIN_PASS=${{ secrets.SOCIAL_LOGIN_PASS }}
+            UPLOADTHING_SECRET=${{ secrets.UPLOADTHING_SECRET }}
+            UPLOADTHING_APP_ID=${{ secrets.UPLOADTHING_APP_ID }}
+            STRIPE_SECRET_KEY=${{ secrets.STRIPE_SECRET_KEY }}
+            STRIPE_PUBLISHER_KEY=${{ secrets.STRIPE_PUBLISHER_KEY }}
+            EOF
+
+            yarn install --frozen-lockfile
+
+            pm2 describe backend_8000 &>/dev/null && pm2 restart backend_8000 || pm2 start yarn --name backend_8000 -- start
+            pm2 save
+            sudo nginx -t
+            sudo systemctl reload nginx
