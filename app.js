@@ -1,12 +1,13 @@
 require("dotenv").config();
 const express = require("express");
-const app = express();
 const session = require("express-session");
 const cors = require("cors");
 const cookieParser = require("cookie-parser");
 const MongoStore = require("connect-mongo");
+const socketServer = require("./socket");
 const port = parseInt(process.env.PORT || "8001", 10);
 require("./config/mongo");
+const app = express();
 
 app.use(
   cors({
@@ -39,6 +40,6 @@ app.use((req, res, next) => {
 app.get("/", (req, res) => res.json({ message: "Hello world" }));
 app.use("/", require("./routes"));
 
-app.listen(port, "0.0.0.0", () => {
-  console.log(`> Server listening at http://localhost:${port}`);
-});
+const server = socketServer(app);
+server.listen(port, "0.0.0.0");
+console.log(`> Server listening at http://localhost:${port}`);
