@@ -27,14 +27,11 @@ const controller = {
         { $inc: { token: -1 } },
         { session }
       );
-      if (item) {
-        const [summary] = await Summary.aggregate([
-          { $match: { _id: item._id } },
-          { $limit: 1 },
-          ...hasOne("userID", "users", "user", ["name", "avatar"]),
-        ]);
-        global.io.to("global-room").except(socketID).emit("summary", summary);
-      }
+      const summary = {
+        ...item.toObject(),
+        user: { name: req.user.name, avatar: req.user.avatar },
+      };
+      global.io.to("global-room").except(socketID).emit("summary", summary);
 
       await session.commitTransaction();
       await session.endSession();
