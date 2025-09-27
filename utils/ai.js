@@ -13,7 +13,7 @@ async function summarizeText(text) {
         {
           role: "system",
           content:
-            "You are a helpful assistant that provides concise and accurate summaries in the same language as the input text.",
+            "You are a helpful assistant that provides concise and accurate summaries in the same language as the input text. Summarize the content to about 30% to 60% of its original length.",
         },
         {
           role: "user",
@@ -21,7 +21,7 @@ async function summarizeText(text) {
         },
       ],
       model: "gpt-5-nano",
-      max_completion_tokens: 1000,
+      max_completion_tokens: 2500,
     });
     return completion.choices[0].message.content;
   } catch (error) {

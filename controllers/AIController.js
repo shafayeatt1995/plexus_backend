@@ -1,18 +1,32 @@
-const { Summary } = require("../models");
+const { Summary, User } = require("../models");
+const mongoose = require("mongoose");
 const { paginate, hasOne } = require("../utils");
 const { summarizeText } = require("../utils/ai");
 
 const controller = {
   async summary(req, res) {
+    const session = await mongoose.startSession();
     try {
+      session.startTransaction();
+
       const { text, socketID } = req.body;
       const output = await summarizeText(text);
 
-      const item = await Summary.create({
-        userID: req.user._id,
-        input: text,
-        output,
-      });
+      const item = await Summary.create(
+        [
+          {
+            userID: req.user._id,
+            input: text,
+            output,
+          },
+        ],
+        { session }
+      );
+      await User.updateOne(
+        { _id: req.user._id },
+        { $inc: { tokens: -1 } },
+        { session }
+      );
       if (item) {
         const [summary] = await Summary.aggregate([
           { $match: { _id: item._id } },
@@ -22,9 +36,13 @@ const controller = {
         global.io.to("global-room").except(socketID).emit("summary", summary);
       }
 
+      await session.commitTransaction();
+      await session.endSession();
       return res.json({ item });
     } catch (error) {
       console.error(error);
+      await session.abortTransaction();
+      await session.endSession();
       return res.status(500).json({ message: "Internal Server Error" });
     }
   },
