@@ -39,7 +39,9 @@ const controller = {
   },
   async purchaseHistory(req, res) {
     try {
-      const purchases = await Purchase.find({ userID: objectID(req.user._id) });
+      const purchases = await Purchase.find({
+        userID: objectID(req.user._id),
+      }).sort({ _id: -1 });
       res.json({ items: purchases });
     } catch (error) {
       console.error(error);
