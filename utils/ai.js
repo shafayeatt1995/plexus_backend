@@ -1,10 +1,14 @@
 const OpenAI = require("openai");
-const openai = new OpenAI({
+const ai = new OpenAI({
   apiKey: process.env.OPENAI_API_KEY,
 });
+// const ai = new OpenAI({
+//   baseURL: "https://api.deepseek.com",
+//   apiKey: process.env.DEEPSK_API_KEY,
+// });
 async function summarizeText(text) {
   try {
-    const completion = await openai.chat.completions.create({
+    const completion = await ai.chat.completions.create({
       messages: [
         {
           role: "system",
