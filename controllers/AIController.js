@@ -12,7 +12,7 @@ const controller = {
       const { text, socketID } = req.body;
       const output = await summarizeText(text);
 
-      const item = await Summary.create(
+      const [item] = await Summary.create(
         [
           {
             userID: req.user._id,
@@ -24,7 +24,7 @@ const controller = {
       );
       await User.updateOne(
         { _id: req.user._id },
-        { $inc: { tokens: -1 } },
+        { $inc: { token: -1 } },
         { session }
       );
       if (item) {
